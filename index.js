@@ -13,13 +13,15 @@ app.use(express.json());
 
 // Configuración de MariaDB
 const pool = mariadb.createPool({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'mi_bd',
-  connectionLimit: 5
-});
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  connectionLimit: 5,
+  connectTimeout: 10000,   // 10 segundos para establecer la conexión
+  acquireTimeout: 10000    // 10 segundos para obtener una conexión del pool
+});;
 
 // Endpoint de prueba básico
 app.get('/api/health', (req, res) => {
@@ -42,6 +44,20 @@ app.get('/api/talcance', async (req, res) => {
   } catch (err) {
     console.error('Error en /api/talcance:', err);
     res.status(500).json({ error: 'Error al obtener datos de talcance' });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
+app.get('/api/db-test', async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    const result = await conn.query('SELECT 1+1 as resultado');
+    res.json({ success: true, message: 'Conexión exitosa', data: result });
+  } catch (err) {
+    console.error('Error en /api/db-test:', err);
+    res.status(500).json({ success: false, error: err.message });
   } finally {
     if (conn) conn.release();
   }
