@@ -22,7 +22,7 @@ const pool = mariadb.createPool({
   //database: process.env.DB_NAME || 'mysql',
 
   host: 'serverless-us-west1.sysp0000.db2.skysql.com',
-  port: 4107,
+  port: 4017,
   user: 'dbpgf31924605',
   password:  '[iDI1nJe6lHt87SzwHi+lBdP9',
   database:  'mysql',
