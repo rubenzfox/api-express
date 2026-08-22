@@ -13,11 +13,11 @@ app.use(express.json());
 
 // Configuración de MariaDB
 const pool = mariadb.createPool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST || 'serverless-us-west1.sysp0000.db2.skysql.com',
+  port: process.env.DB_PORT || 4107,
+  user: process.env.DB_USER || 'dbpgf31924605',
+  password: process.env.DB_PASSWORD || '[iDI1nJe6lHt87SzwHi+lBdP9',
+  database: process.env.DB_NAME || 'mysql',
   connectionLimit: 5,
   connectTimeout: 10000,   // 10 segundos para establecer la conexión
   acquireTimeout: 10000    // 10 segundos para obtener una conexión del pool
@@ -46,6 +46,7 @@ app.get('/api/talcance', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener datos de talcance' });
   } finally {
     if (conn) conn.release();
+    await pool.end();
   }
 });
 
