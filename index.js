@@ -5,7 +5,24 @@ const mariadb = require('mariadb');
 
 const fs = require('fs');
 
+
+
 dotenv.config();
+
+
+// Leer el certificado CA desde la variable de entorno (si existe)
+const caCert = process.env.DB_CA_CERT || null;
+const sslConfig = { rejectUnauthorized: process.env.DB_SSL_REJECT === 'true' };
+
+if (caCert) {
+  // Si la variable existe, usamos su contenido como certificado
+  // Aunque sea multilínea, podemos pasarlo directamente como string
+  sslConfig.ca = caCert;
+} else {
+  // Si no hay variable, deshabilitamos la verificación (solo en desarrollo)
+  sslConfig.rejectUnauthorized = false;
+}
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +47,8 @@ const pool = mariadb.createPool({
   connectTimeout: 10000,   // 10 segundos para establecer la conexión
   acquireTimeout: 10000,    // 10 segundos para obtener una conexión del pool
   
+  ssl: sslConfig
+  /*
   ssl: {
       // Provide at least one field (e.g., ca) to enable TLS verification.
       // Load PEM files into strings or Buffers:
@@ -41,7 +60,7 @@ const pool = mariadb.createPool({
       // cert: fs.readFileSync('/path/to/client-cert.pem', 'utf8'),
       rejectUnauthorized: true
     }
-  
+  */
 });;
 
 // Endpoint de prueba básico
