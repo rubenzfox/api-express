@@ -3,6 +3,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mariadb = require('mariadb');
 
+const fs = require('fs');
+
 dotenv.config();
 
 const app = express();
@@ -26,7 +28,16 @@ const pool = mariadb.createPool({
   database:  'mysql',
   connectionLimit: 5,
   connectTimeout: 10000,   // 10 segundos para establecer la conexión
-  acquireTimeout: 10000    // 10 segundos para obtener una conexión del pool
+  acquireTimeout: 10000,    // 10 segundos para obtener una conexión del pool
+  ssl: {
+      // Provide at least one field (e.g., ca) to enable TLS verification.
+      // Load PEM files into strings or Buffers:
+      ca: fs.readFileSync('/ca/globalsignrootca.pem', 'utf8'),          // required if server cert validation is enforced
+      //F:\capacitaciones\SPA Node Js-Vue\MariaDB
+      // key: fs.readFileSync('/path/to/client-key.pem', 'utf8'), // only if client cert auth required
+      // cert: fs.readFileSync('/path/to/client-cert.pem', 'utf8'),
+      rejectUnauthorized: true
+    }
 });;
 
 // Endpoint de prueba básico
