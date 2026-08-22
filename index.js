@@ -32,7 +32,7 @@ const pool = mariadb.createPool({
   ssl: {
       // Provide at least one field (e.g., ca) to enable TLS verification.
       // Load PEM files into strings or Buffers:
-      ca: fs.readFileSync('/ca/globalsignrootca.pem', 'utf8'),          // required if server cert validation is enforced
+      ca: fs.readFileSync('globalsignrootca.pem', 'utf8'),          // required if server cert validation is enforced
       //F:\capacitaciones\SPA Node Js-Vue\MariaDB
       // key: fs.readFileSync('/path/to/client-key.pem', 'utf8'), // only if client cert auth required
       // cert: fs.readFileSync('/path/to/client-cert.pem', 'utf8'),
